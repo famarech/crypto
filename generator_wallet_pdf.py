@@ -13,6 +13,13 @@ from PIL import Image
 
 
 
+# Fonction pour mettre un retour chariot
+def format_with_backspace(data):
+    return '\n'.join(data[i:i+50] for i in range(0, len(data), 50))
+
+
+
+
 # Fonction pour formater les clés et l'adresse
 def format_with_spaces(data):
     return ' '.join(data[i:i+4] for i in range(0, len(data), 4))
@@ -49,6 +56,7 @@ sk = ecdsa.SigningKey.from_string(private_key, curve=ecdsa.SECP256k1)
 vk = sk.get_verifying_key()
 public_key = b'\x04' + vk.to_string()
 
+
 # Générer une adresse Bitcoin à partir de la clé publique
 sha256_1 = hashlib.sha256(public_key).digest()
 ripemd160 = hashlib.new('ripemd160')
@@ -81,10 +89,14 @@ c.drawString(72, height - 72, "Clé Privée:")
 c.drawString(72, height - 90, format_with_spaces(formatted_private_key))
 
 c.drawString(72, height - 130, "Clé Publique:")
-c.drawString(72, height - 148, format_with_spaces(formatted_public_key))
+c.drawString(72, height - 148, format_with_backspace(format_with_spaces(formatted_public_key[0:50])))
+c.drawString(72, height - 166, format_with_backspace(format_with_spaces(formatted_public_key[51:100])))
+c.drawString(72, height - 184, format_with_backspace(format_with_spaces(formatted_public_key[101:150])))
+c.drawString(72, height - 202, format_with_backspace(format_with_spaces(formatted_public_key[151:])))
 
-c.drawString(72, height - 188, "Adresse Bitcoin:")
-c.drawString(72, height - 206, format_with_spaces(formatted_address))
+
+c.drawString(72, height - 242, "Adresse Bitcoin:")
+c.drawString(72, height - 260, format_with_spaces(formatted_address))
 
 # Ajouter les QR codes au PDF
 qr_size = 2 * inch  # Taille des QR codes
@@ -102,3 +114,4 @@ c.drawImage(barcode_address + ".png", 72, height - 750, width=barcode_width, hei
 c.save()
 
 print(f"PDF created: {pdf_filename}")
+print("Clé Publique:", format_with_backspace(format_with_spaces(formatted_public_key)))
